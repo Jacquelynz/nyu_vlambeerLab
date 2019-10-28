@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 // MAZE PROC GEN LAB
 // all students: complete steps 1-6, as listed in this file
 // optional: if you have extra time, complete the "extra tasks" to do at the very bottom
@@ -16,11 +17,63 @@ public class Pathmaker : MonoBehaviour {
 
 //	DECLARE CLASS MEMBER VARIABLES:
 //	Declare a private integer called counter that starts at 0; 		// counter var will track how many floor tiles I've instantiated
+	public static int Counter;
 //	Declare a public Transform called floorPrefab, assign the prefab in inspector;
-//	Declare a public Transform called pathmakerSpherePrefab, assign the prefab in inspector; 		// you'll have to make a "pathmakerSphere" prefab later
+	public Transform Mountaintile,Normaltile,Treetile;
+//	Declare a public Transform called pathmakerSpherePrefab, assign the prefab in inspector;// you'll have to make a "pathmakerSphere" prefab later
+	public Transform pathmakerSpherePrefab;
+	public float chance2Left;
+	public float chance2Right;
+	public int lifeTime,tileselect;
 
+	void Start()
+	{
+		chance2Left = Random.Range(0.2f, 0.3f);
+		chance2Right = Random.Range(0.5f, 0.6f);
+		lifeTime = Random.Range(10, 20);
+	}
 
 	void Update () {
+		
+
+		if (Pathmaker.Counter < 500)
+		{
+			float rn = Random.Range(0f, 1.5f);
+			if (rn< chance2Left)
+			{
+				transform.Rotate(new Vector3(0f, 90f, 0f));
+			}else if (chance2Left < rn && rn< chance2Right)
+			{
+				transform.Rotate(new Vector3(0f,-90f,0f));
+			}else if (0.99f < rn && rn < 1.05f)
+			{
+				Instantiate(pathmakerSpherePrefab);
+			}
+
+			tileselect = Random.Range(1,4);
+			if (tileselect == 1)
+			{
+				Instantiate(Mountaintile,this.gameObject.transform.position,Quaternion.identity);
+			}else if (tileselect == 2)
+			{
+				Instantiate(Normaltile,this.gameObject.transform.position,Quaternion.identity);
+			}else if (tileselect == 3)
+			{
+				Instantiate(Treetile,this.gameObject.transform.position,Quaternion.identity);
+			}
+			
+			
+			this.gameObject.transform.Translate(Vector3.forward * 5f);
+			Pathmaker.Counter++;
+		} else if(Pathmaker.Counter > lifeTime)
+		{
+			Destroy(gameObject);
+		}
+		else
+		{
+			Destroy(gameObject);
+		}
+		
 //		If counter is less than 50, then:
 //			Generate a random number from 0.0f to 1.0f;
 //			If random number is less than 0.25f, then rotate myself 90 degrees;
@@ -50,7 +103,8 @@ public class Pathmaker : MonoBehaviour {
 //	- put Pathmaker.cs on a sphere, configure all the prefabs in the Inspector, and test it to make sure it works
 //	STABILIZE: 
 //	- code it so that all the Pathmakers can only spawn a grand total of 500 tiles in the entire world; how would you do that?
-//	- (hint: declare a "public static int" and have each Pathmaker check this "globalTileCount", somewhere in your code? if there are already enough tiles, then maybe the Pathmaker could Destroy my game object
+//	- (hint: declare a "public static int" and have each Pathmaker check this "globalTileCount", somewhere in your code?
+//if there are already enough tiles, then maybe the Pathmaker could Destroy my game object
 
 
 
@@ -101,4 +155,5 @@ public class Pathmaker : MonoBehaviour {
 // 1. raycast downwards around each floor tile (that'd be 8 raycasts per floor tile, in a square "ring" around each tile?)
 // 2. if the raycast "fails" that means there's empty void there, so then instantiate a Wall tile prefab
 // 3. ... repeat until walls surround your entire floorplan
-// (technically, you will end up raycasting the same spot over and over... but the "proper" way to do this would involve keeping more lists and arrays to track all this data)
+// (technically, you will end up raycasting the same spot over and over... but the "proper" way to do this would involve
+// keeping more lists and arrays to track all this data)
